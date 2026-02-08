@@ -78,7 +78,7 @@ export default function SimpleImageModal({
             <div className="relative z-10 max-w-6xl w-full px-6">
                 {!loaded && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-full max-h-[85vh] rounded-lg bg-gray-700/40" />
+                        <div className="w-full h-full max-h-[85vh] rounded-lg" />
                     </div>
                 )}
                 <Image
