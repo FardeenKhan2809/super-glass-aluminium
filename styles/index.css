@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  img[loading="lazy"] {
+    clip-path: inset(0.6px);
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tabs {
+  justify-content: center;
+}
+
+.service-index {
+  margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 0px 12px;
+  }
+
+  .tabs {
+    justify-content: flex-start;
+    gap: 6px;
+    padding-inline: 2px;
+  }
+
+  .service-card {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .service-index {
+    margin-bottom: 0px;
+  }
+
+  .galley-section {
+    padding-top: 50px;
+  }
+
+  .gallery-title {
+    margin-bottom: 20px;
+  }
+  
+  .contacts {
+    margin-top: 20px;
+  }
+
+  .copyright {
+    font-size: 10px;
+  }
+}
