@@ -10,7 +10,7 @@ import cloudinary from "../utils/cloudinary";
 import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
 import type { ImageProps } from "../utils/types";
 import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
-
+import SimpleImageModal from "../components/SimpleImageModal";
 
 const ServiceCard = ({
   title,
@@ -80,9 +80,11 @@ const Home: NextPage = ({
   const router = useRouter();
   const { photoId } = router.query;
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto();
+  const [imageLoading, setImageLoading] = useState(true);
   const lastViewedPhotoRef = useRef<HTMLAnchorElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [activeService, setActiveService] = useState<keyof typeof serviceTitles>(
     "aluminium"
   );
@@ -104,6 +106,10 @@ const Home: NextPage = ({
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    setImageLoading(true);
+  }, [activeService]);
 
   useEffect(() => {
     if (lastViewedPhoto && !photoId) {
@@ -300,16 +306,29 @@ const Home: NextPage = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <div
+            className={`grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 transition-opacity duration-300 ${imageLoading ? "opacity-0" : "opacity-100"
+              }`}
+          >
+            {imageLoading && (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 mb-6">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="aspect-[4/3] rounded-2xl bg-gray-200"
+                  />
+                ))}
+              </div>
+            )}
             {imagesByService[activeService]?.map(
               ({ id, public_id, format, blurDataUrl }) => (
-                <Link
+                <button
                   key={id}
-                  href={`/?photoId=${id}`}
-                  shallow
+                  onClick={() => setModalIndex(id)}
                   className="group block overflow-hidden rounded-2xl bg-white shadow-sm transition hover:shadow-lg"
                 >
                   <Image
+                    onLoad={() => setImageLoading(false)}
                     alt={serviceTitles[activeService]}
                     placeholder="blur"
                     blurDataURL={blurDataUrl}
@@ -318,7 +337,7 @@ const Home: NextPage = ({
                     height={450}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                </Link>
+                </button>
               )
             )}
           </div>
@@ -329,6 +348,23 @@ const Home: NextPage = ({
       <footer className="copyright bg-black py-8 text-center text-sm text-gray-400">
         © {new Date().getFullYear()} Super Glass Aluminium & PVC Furniture. All rights reserved.
       </footer>
+      {modalIndex !== null && (
+        <SimpleImageModal
+          images={imagesByService[activeService]}
+          index={modalIndex}
+          onClose={() => setModalIndex(null)}
+          onPrev={() =>
+            setModalIndex((i) => (i !== null && i > 0 ? i - 1 : i))
+          }
+          onNext={() =>
+            setModalIndex((i) =>
+              i !== null && i < imagesByService[activeService].length - 1
+                ? i + 1
+                : i
+            )
+          }
+        />
+      )}
     </>
   );
 };
@@ -351,7 +387,7 @@ export async function getStaticProps() {
     const results = await cloudinary.v2.search
       .expression(`folder:${folder}`)
       .sort_by("public_id", "desc")
-      .max_results()
+      .max_results(400)
       .execute();
 
     const reducedResults: ImageProps[] = results.resources.map(
