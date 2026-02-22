@@ -69,7 +69,6 @@ export default function SimpleImageModal({
 
     return (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
-            {/* BACKDROP */}
             <div
                 className="absolute inset-0"
                 onClick={onClose}
@@ -90,7 +89,6 @@ export default function SimpleImageModal({
                     className="mx-auto max-h-[85vh] w-auto object-contain rounded-lg shadow-xl transition-opacity duration-200"
                 />
 
-                {/* LEFT BUTTON */}
                 {index > 0 && (
                     <button
                         onClick={onPrev}
@@ -104,7 +102,6 @@ export default function SimpleImageModal({
                     </button>
                 )}
 
-                {/* RIGHT BUTTON */}
                 {index < images.length - 1 && (
                     <button
                         onClick={onNext}
@@ -118,7 +115,6 @@ export default function SimpleImageModal({
                     </button>
                 )}
 
-                {/* CLOSE BUTTON */}
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 
